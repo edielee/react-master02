@@ -29,3 +29,7 @@
 
 1. react-hook-form : 폼의 상태를 추적하고 유효성을 검사하는 데 사용 / useForm 이라는 hook을 사용해 각입력값에 유효성 검사, 에러 메세지등을 표시하고 설정하는데 사용된다.
    Page ToDoList 참고 .
+
+### 07강
+
+1. react-beautiful-dnd 란 ? 드래그 앤 드롭 기능을 구현하기 위한 라이브러리.
