@@ -1,165 +1,144 @@
-// import { DragDropContext, DropResult } from 'react-beautiful-dnd';
-// import { useRecoilState } from 'recoil';
-// import styled from 'styled-components';
-// import { toDoState } from './atoms';
-// import Board from './components/Board';
+import styled from "styled-components";
+import { motion, useMotionValue, useTransform } from "framer-motion";
+import { RecoilBridge } from "recoil";
+import { useEffect, useRef } from "react";
 
-// const Wrapper = styled.div`
-//     display: flex;
-//     width: 100vw;
-//     margin: 0 auto;
-//     justify-content: center;
-//     align-items: center;
-//     height: 100vh;
-// `;
-
-// const Boards = styled.div`
-//     display: flex;
-//     justify-content: center;
-//     align-items: flex-start;
-//     width: 100%;
-//     gap: 10px;
-// `;
-
-// //react-beautiful-dnd 란 ? 드래그 앤 드롭 기능을 구현하기 위한 라이브러리.
-
-// function App() {
-//     const [toDos, setToDos] = useRecoilState(toDoState); // useRecoilState: Recoil 상태를 읽고 쓰기 위해 useRecoilState 훅 사용.
-//     // onDragEnd : 마우스 드래깅이 끝나면 호출되는 함수
-//     // onDragEnd 함수를 정의하여 드래그 앤 드롭 이벤트를 처리합
-//     const onDragEnd = (info: DropResult) => {
-//         // DropResult은 react-beautiful-dnd 라이브러리에서 드래그 앤 드롭 동작이 종료될 때 반환되는 객체
-//         const { destination, source } = info; // source: 드래그되었던 요소의 출발 지점에 대한 정보를 포함하는 객체. // destination: 드롭된 지점에 대한 정보를 포함하는 객체. (드롭되지 않은 경우는 null)
-//         if (!destination) return; //이벤트 핸들러 내부에서 드롭된 지점이 없는 경우(즉, 드롭이 취소된 경우) 해당 이벤트 핸들러를 종료하고 더 이상 로직을 수행하지 않도록 하는 코드
-//         if (destination?.droppableId === source.droppableId) {
-//             // 같은 보드에서이동했을시
-//             // 이벤트 핸들러에서는 드래그 앤 드롭 결과에 따라 Recoil 상태를 업데이트
-//             setToDos((allBoards) => {
-//                 //allBoards : 이전 상태에서 전달된 모든 보드들의 정보
-//                 const boardCopy = [...allBoards[source.droppableId]];
-//                 const taskObj = boardCopy[source.index];
-//                 boardCopy.splice(source.index, 1);
-//                 boardCopy.splice(destination?.index, 0, taskObj);
-//                 return {
-//                     ...allBoards,
-//                     [source.droppableId]: boardCopy,
-//                 };
-//             });
-//         }
-//         if (destination.droppableId !== source.droppableId) {
-//             // 다른보드로 이동했을 시.
-//             // cross board movement
-//             setToDos((allBoards) => {
-//                 //이벤트 핸들러에서는 드래그 앤 드롭 결과에 따라 Recoil 상태를 업데이트
-//                 const sourceBoard = [...allBoards[source.droppableId]];
-//                 const taskObj = sourceBoard[source.index];
-//                 const destinationBoard = [...allBoards[destination.droppableId]];
-//                 sourceBoard.splice(source.index, 1);
-//                 destinationBoard.splice(destination?.index, 0, taskObj);
-//                 return {
-//                     ...allBoards,
-//                     [source.droppableId]: sourceBoard,
-//                     [destination.droppableId]: destinationBoard,
-//                 };
-//             });
-//         }
-//     };
-
-//     //
-//     return (
-//         <DragDropContext onDragEnd={onDragEnd}>
-//             <Wrapper>
-//                 <Boards>
-//                     {Object.keys(toDos).map((boardId) => (
-//                         <Board boardId={boardId} key={boardId} toDos={toDos[boardId]} />
-//                     ))}
-//                 </Boards>
-//             </Wrapper>
-//         </DragDropContext>
-//     );
-// }
-
-// export default App;
-
-//-----------------------------------------------------------------6강
-import { createGlobalStyle } from 'styled-components';
-
-import ToDoList from './components/ToDoList';
-
-//전역에 컴퍼넌트에 할당해주는스타일 ( createGlobalStyle)
-// css소스는 어떠한 css도 리셋해주는 스타일 소스
-const GlobalStyle = createGlobalStyle`
-@import url('https://fonts.googleapis.com/css2?family=Source+Sans+Pro:wght@300;400&display=swap');
-html, body, div, span, applet, object, iframe,
-h1, h2, h3, h4, h5, h6, p, blockquote, pre,
-a, abbr, acronym, address, big, cite, code,
-del, dfn, em, img, ins, kbd, q, s, samp,
-small, strike, strong, sub, sup, tt, var,
-b, u, i, center,
-dl, dt, dd, menu, ol, ul, li,
-fieldset, form, label, legend,
-table, caption, tbody, tfoot, thead, tr, th, td,
-article, aside, canvas, details, embed,
-figure, figcaption, footer, header, hgroup,
-main, menu, nav, output, ruby, section, summary,
-time, mark, audio, video {
-  margin: 0;
-  padding: 0;
-  border: 0;
-  font-size: 100%;
-  font: inherit;
-  vertical-align: baseline;
-}
-/* HTML5 display-role reset for older browsers */
-article, aside, details, figcaption, figure,
-footer, header, hgroup, main, menu, nav, section {
-  display: block;
-}
-/* HTML5 hidden-attribute fix for newer browsers */
-*[hidden] {
-    display: none;
-}
-body {
-  line-height: 1;
-}
-menu, ol, ul {
-  list-style: none;
-}
-blockquote, q {
-  quotes: none;
-}
-blockquote:before, blockquote:after,
-q:before, q:after {
-  content: '';
-  content: none;
-}
-table {
-  border-collapse: collapse;
-  border-spacing: 0;
-}
-* {
-  box-sizing: border-box;
-}
-body {
-  font-weight: 300;
-  font-family: 'Source Sans Pro', sans-serif;
-  background-color:${(props) => props.theme.bgColor};
-  color:${(props) => props.theme.textColor};
-  line-height: 1.2;
-}
-a {
-  text-decoration:none;
-  color:inherit;
-}
+const Wrapper = styled.div`
+  height: 100vh;
+  width: 100vw;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 100vh;
 `;
-//inherit 부모에게서 가져와서 설정해라
-function App() {
-    return (
-        <>
-            <GlobalStyle />
-            <ToDoList />
-        </>
-    );
-}
 
+// const Box = styled(motion.div)`
+//   width: 200px;
+//   height: 200px;
+//   display: grid;
+//   grid-template-columns: repeat(2, 1fr);
+//   background-color: rgba(255, 255, 255, 0.2);
+//   border-radius: 15px;
+//   box-shadow: 0 2px 3px rgba(0, 0, 0, 0.1), 0 10px 20px rgba(0, 0, 0, 0.06);
+// `;
+
+// const myVars = {
+//   start: { scale: 0 },
+//   end: { scale: 1, rotateZ: 360, Transition: { type: "spring", delay: 0.5 } },
+// };
+
+//-----------------------------------------------------------
+
+// const Cicle = styled(motion.div)`
+//   background-color: white;
+//   width: 70px;
+//   height: 70px;
+//   border-radius: 35px;
+//   place-self: center;
+//   box-shadow: 0 2px 3px rgba(0, 0, 0, 0.1), 0 10px 20px rgba(0, 0, 0, 0.06);
+// `;
+
+// const cicleVariants = {
+//   start: { opacity: 0, y: 10 },
+//   end: {
+//     opacity: 1,
+//     y: 0, //motion 에만 있음  y/x좌표설정
+//   },
+// };
+
+// const boxVaiants = {
+//   start: { opacity: 0, scale: 0.5 },
+//   end: {
+//     opacity: 1,
+//     scale: 1,
+//     transition: {
+//       type: "spring",
+//       duration: 0.5,
+//       bounce: 0.5,
+//       delayChildren: 0.5, //자식들에게 효과(자식의 variants)
+//       staggerChildren: 0.2, // 순차적으로 딜레이 효과줌.(자식의 variants)
+//     },
+//   },
+// };
+
+////-----------------------------------------------------------
+
+// const Box = styled(motion.div)`
+//   width: 200px;
+//   height: 200px;
+//   background-color: rgba(255, 255, 255, 1);
+//   border-radius: 15px;
+//   box-shadow: 0 2px 3px rgba(0, 0, 0, 0.1), 0 10px 20px rgba(0, 0, 0, 0.06);
+// `;
+
+// const boxVaiants = {
+//   hover: {
+//     //scale: 2,
+//     rotateZ: 90,
+//   },
+//   click: {
+//     //scale: 1,
+//     borderRadius: "100px",
+//   },
+//   // drag: {
+//   //   backgroundColor: "rgb(46, 204, 113)",
+//   //   transition: { duration: 10 },
+//   // },
+// };
+
+// const BiggerBox = styled.div`
+//   width: 600px;
+//   height: 600px;
+//   background-color: rgba(255, 255, 255, 0.2);
+//   border-radius: 40px;
+//   display: flex;
+//   justify-content: center;
+//   align-items: center;
+//   overflow: hidden;
+// `;
+
+////-----------------------------------------------------------
+
+const Box = styled(motion.div)`
+  width: 200px;
+  height: 200px;
+  background-color: rgba(255, 255, 255, 1);
+  border-radius: 15px;
+  box-shadow: 0 2px 3px rgba(0, 0, 0, 0.1), 0 10px 20px rgba(0, 0, 0, 0.06);
+`;
+
+function App() {
+  //const biggerBoxRef = useRef<HTMLDivElement>(null);
+  const x = useMotionValue(0); //한번만 랜더링된다.
+  const scale = useTransform(x, [-800, 0, 800], [2, 1, 0]); // 기준이되는값, 조건, 아웃풋
+  useEffect(() => {
+    scale.on("change", () => console.log(scale.get())); //x축의 경로를 업데이트한다.
+  }, [x]);
+
+  return (
+    <Wrapper>
+      {/* <Box variants={myVars} initial="start" animate="end" /> */}
+      {/* <Box variants={boxVaiants} initial="start" animate="end">
+        <Cicle variants={cicleVariants} />
+        <Cicle variants={cicleVariants} />
+        <Cicle variants={cicleVariants} />
+        <Cicle variants={cicleVariants} />
+      </Box> */}
+      {/* <BiggerBox ref={biggerBoxRef}>
+        <Box
+          drag //말그대로 클릭후 이동이 가능하게함.
+          dragSnapToOrigin // 원래 위치로 돌아가게함다.
+          dragElastic={0} //박스에 갇혀서 밖에로 이동못하게함.
+          dragConstraints={biggerBoxRef} //drag 할수있는 범위
+          variants={boxVaiants}
+          whileHover="hover"
+          whileDrag="drag"
+          whileTap="click"
+        ></Box>
+      </BiggerBox> */}
+
+      <Box style={{ x, scale: scale }} drag="x" dragSnapToOrigin />
+    </Wrapper>
+  );
+}
 export default App;

@@ -2,7 +2,7 @@
 
 ( 00 ~ 01 )
 
-1. 상태관리도구(state management)가 무엇인가 ?
+1. 상태(데이터의 조건,값 등)관리도구(state management)가 무엇인가 ?
    => React에서 State는 component 안에서 관리되는 것이다.
 2. 상태관리도구 종류 ?
    => React Context, Redux, MobX
